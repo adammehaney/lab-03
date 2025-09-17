@@ -11,26 +11,27 @@ import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ArrayList<String> dataList;
-    private ListView cityList;
-    private ArrayAdapter<String> cityAdapter;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         String[] cities = {
-                "Edmonton", "Vancouver", "Moscow",
-                "Sydney", "Berlin", "Vienna",
-                "Tokyo", "Beijing", "Osaka", "New Delhi"
+                "Edmonton", "Vancouver", "Toronto"
         };
 
-        dataList = new ArrayList<>();
-        dataList.addAll(Arrays.asList(cities));
-        
-        cityList = findViewById(R.id.city_list);
-        cityAdapter = new ArrayAdapter<>(this, R.layout.content, dataList);
+        String[] provinces = {
+                "AB", "BC", "ON"
+        };
+
+        ArrayList<City> dataList = new ArrayList<City>();
+        for (int i = 0; i < cities.length; i++) {
+            dataList.add(new City(cities[i], provinces[i]));
+        }
+
+        CityArrayAdapter cityAdapter = new CityArrayAdapter(this, dataList);
+
+        ListView cityList = findViewById(R.id.city_list);
         cityList.setAdapter(cityAdapter);
     }
 }
