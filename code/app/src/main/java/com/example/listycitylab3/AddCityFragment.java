@@ -13,8 +13,17 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 public class AddCityFragment extends DialogFragment {
+    private City contextualObject;
+    public AddCityFragment(City contextualObject) {
+        this.contextualObject = contextualObject;
+    }
+
+    public AddCityFragment() {
+    }
+
     interface AddCityDialogListener {
         void addCity(City city);
+        void editCity(City city);
     }
 
     private AddCityDialogListener listener;
@@ -34,17 +43,31 @@ public class AddCityFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_add_city, null);
+
         EditText editCityName = view.findViewById(R.id.edit_text_city_text);
         EditText editProvinceName = view.findViewById(R.id.edit_text_province_text);
+
+        if (contextualObject != null) {
+            editCityName.setText(contextualObject.getName());
+            editProvinceName.setText(contextualObject.getProvince());
+        }
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         return builder
                 .setView(view)
-                .setTitle("Add a city")
+                .setTitle(getTag())
                 .setNegativeButton("Cancel", null)
-                .setPositiveButton("Add", (dialog, which) -> {
+                .setPositiveButton("Done", (dialog, which) -> {
                     String cityName = editCityName.getText().toString();
                     String provinceName = editProvinceName.getText().toString();
-                    listener.addCity(new City(cityName, provinceName));
+                    if (contextualObject != null) {
+                        contextualObject.setName(cityName);
+                        contextualObject.setProvince(provinceName);
+
+                        listener.editCity(contextualObject);
+                    } else {
+                        listener.addCity(new City(cityName, provinceName));
+                    }
                 })
                 .create();
     }
